@@ -40,7 +40,9 @@ dependencies {
     testImplementation 'io.projectreactor:reactor-test'
 
     // Seeding
-    implementation 'com.github.javafaker:javafaker:1.0.2'
+    implementation('com.github.javafaker:javafaker:1.0.2') {
+        exclude group: 'org.yaml', module: 'snakeyaml'
+    }
 }
 
 dependencyManagement {
