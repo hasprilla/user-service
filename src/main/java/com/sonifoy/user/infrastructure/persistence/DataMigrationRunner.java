@@ -28,6 +28,11 @@ public class DataMigrationRunner {
                 "ALTER TABLE users ADD COLUMN IF NOT EXISTS country VARCHAR(100)",
                 "ALTER TABLE users ADD COLUMN IF NOT EXISTS device_data TEXT",
                 "ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_type VARCHAR(50)",
+                "ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_code VARCHAR(255)",
+                "ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_code_expires_at TIMESTAMP",
+                "ALTER TABLE users ADD COLUMN IF NOT EXISTS last_login_at TIMESTAMP",
+                "ALTER TABLE users ADD COLUMN IF NOT EXISTS last_active_at TIMESTAMP",
+                "ALTER TABLE users ADD COLUMN IF NOT EXISTS last_session_duration BIGINT",
                 "ALTER TABLE users ADD COLUMN IF NOT EXISTS verified BOOLEAN DEFAULT FALSE",
                 "ALTER TABLE users ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
                 "ALTER TABLE users ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
