@@ -11,6 +11,16 @@ spring:
     url: r2dbc:postgresql://sonifoy-db:5432/user_db
     username: sonifoy_user
     password: sonifoy_password
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:kafka:29092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  cassandra:
+    contact-points: ${CASSANDRA_CONTACT_POINTS:cassandra:9042}
+    local-datacenter: ${CASSANDRA_LOCAL_DATACENTER:datacenter1}
+    keyspace-name: sonifoy_user_keyspace
+    schema-action: create_if_not_exists
 
 eureka:
   client:
