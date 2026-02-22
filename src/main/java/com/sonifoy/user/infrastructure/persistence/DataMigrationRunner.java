@@ -1,14 +1,17 @@
 package com.sonifoy.user.infrastructure.persistence;
 
-import io.r2dbc.spi.ConnectionFactory;
-import jakarta.annotation.PostConstruct;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import java.time.Duration;
 
 @Component
 @Slf4j
-public class DataMigrationRunner {
+public class DataMigrationRunner implements CommandLineRunner {
 
     private final DatabaseClient databaseClient;
 
@@ -16,9 +19,9 @@ public class DataMigrationRunner {
         this.databaseClient = databaseClient;
     }
 
-    @PostConstruct
-    public void runMigrations() {
-        log.info("Running manual database migrations...");
+    @Override
+    public void run(String... args) {
+        log.info("Starting synchronous database migrations...");
 
         String[] queries = {
                 "ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url VARCHAR(255)",
@@ -38,14 +41,17 @@ public class DataMigrationRunner {
                 "ALTER TABLE users ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
         };
 
-        for (String query : queries) {
-            databaseClient.sql(query)
-                    .fetch()
-                    .rowsUpdated()
-                    .subscribe(
-                            rows -> log.info("Successfully executed: {} (Rows updated: {})", query, rows),
-                            error -> log.error("Failing to execute migration query: {}. Error: {}", query,
-                                    error.getMessage()));
-        }
+        Flux.fromArray(queries)
+                .flatMap(query -> databaseClient.sql(query)
+                        .fetch()
+                        .rowsUpdated()
+                        .doOnSuccess(rows -> log.info("Successfully executed: {} (Rows: {})", query, rows))
+                        .doOnError(error -> log.error("Failed to execute: {}. Error: {}", query, error.getMessage()))
+                        .onErrorResume(e -> Mono.empty()) // Continue on error
+                )
+                .collectList()
+                .block(Duration.ofMinutes(1));
+
+        log.info("Finished synchronous database migrations.");
     }
 }
