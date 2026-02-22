@@ -74,7 +74,8 @@ public class UserService {
                 .profileType(entity.getProfileType())
                 .verified(entity.isVerified())
                 .lastLoginAt(entity.getLastLoginAt())
-                .createdAt(entity.getLastActiveAt()) // mapping inconsistency? UserEntity doesn't show createdAt?
+                .createdAt(entity.getCreatedAt())
+                .updatedAt(entity.getUpdatedAt())
                 // Let's check UserEntity content again. It has lastActiveAt but maybe lacks
                 // createdAt?
                 // Ah, User.java has createdAt. UserEntity didn't have it in my view earlier?

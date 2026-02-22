@@ -37,4 +37,7 @@ public class UserEntity {
     private java.time.Instant lastLoginAt;
     private java.time.Instant lastActiveAt;
     private Long lastSessionDuration; // in seconds
+
+    private java.time.Instant createdAt;
+    private java.time.Instant updatedAt;
 }
