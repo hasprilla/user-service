@@ -1,8 +1,13 @@
 spring:
   r2dbc:
-    url: r2dbc:postgresql://${DATABASE_URL_UNJ?:sonifoy-db:5432/user_db}
+    url: r2dbc:postgresql://${DATABASE_URL_UNJ?:sonifoy-db:5432/auth_db}
     username: ${PGUSER:sonifoy_user}
     password: ${PGPASSWORD:sonifoy_password}
+  data:
+    redis:
+      host: ${REDISHOST:sonifoy-redis}
+      port: ${REDISPORT:6379}
+      password: ${REDISPASSWORD:}
 
 eureka:
   client:
