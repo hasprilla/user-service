@@ -47,9 +47,15 @@ public class DataMigrationRunner implements CommandLineRunner {
                         .rowsUpdated()
                         .doOnSuccess(rows -> log.info("Successfully executed: {} (Rows: {})", query, rows))
                         .doOnError(error -> log.error("Failed to execute: {}. Error: {}", query, error.getMessage()))
-                        .onErrorResume(e -> Mono.empty()) // Continue on error
-                )
+                        .onErrorResume(e -> Mono.empty()))
                 .collectList()
+                .then(
+                        databaseClient
+                                .sql("SELECT column_name FROM information_schema.columns WHERE table_name = 'users'")
+                                .map((row, metadata) -> row.get("column_name", String.class))
+                                .all()
+                                .collectList()
+                                .doOnSuccess(columns -> log.info("Actual columns in 'users' table: {}", columns)))
                 .block(Duration.ofMinutes(1));
 
         log.info("Finished synchronous database migrations.");
